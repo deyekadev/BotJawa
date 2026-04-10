@@ -1,16 +1,14 @@
-client.on('messageCreate', async (message) => {
-    // 1. Abaikan jika yang kirim pesan adalah bot lain
-    if (message.author.bot) return;
+const { Events } = require("discord.js");
 
-    // 2. Perintah Ping sederhana
-    if (message.content === '!ping') {
-        const sent = await message.reply('Sedang menghitung latensi...');
+module.exports = {
+    name: Events.MessageCreate, // Menggunakan konstanta Events agar lebih aman
+    async execute(message) {
+        // Validasi: bukan bot dan isinya tepat !ping
+        if (message.author.bot || message.content !== '!ping') return;
+
+        const sent = await message.reply('🏓 Sedang menghitung...');
         const latency = sent.createdTimestamp - message.createdTimestamp;
         
-        sent.edit(`🏓 **Pong!**\n- Latensi Bot: \`${latency}ms\`\n- Latensi API: \`${Math.round(client.ws.ping)}ms\``);
-        return; // Hentikan proses agar tidak dianggap spam oleh logika di bawahnya
-    }
-
-    // --- LOGIKA ANTI-SPAM KAMU LANJUT DI SINI ---
-    // (Copy-paste kode anti-spam yang saya berikan sebelumnya di sini)
-});
+        return sent.edit(`🏓 **Pong!**\n- Latensi Bot: \`${latency}ms\``);
+    },
+};
