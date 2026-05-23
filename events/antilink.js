@@ -28,17 +28,21 @@ module.exports = {
 
 
             // ==========================================
-            // 2. PENGATURAN WHITELIST LINK
+            // 2. PENGATURAN WHITELIST LINK (SUDAH DISINKRONKAN)
             // ==========================================
-            // Daftar link yang diizinkan untuk dikirim oleh member biasa
+            // Daftar kata kunci link yang diizinkan untuk dikirim oleh member biasa
             const whitelistedLinks = [
-                'vt.tiktok.com', 
-                'roblox.com/share'
+                'tiktok.com',      // Mengizinkan vt.tiktok.com, www.tiktok.com, dll.
+                'roblox.com'       // Mengizinkan roblox.com/share, roblox.com/games, dll.
             ]; 
             
             // Ambil semua link dari pesan yang dikirim
+            // Reset regex index karena .test() sempat mengubah index internal regex
+            linkRegex.lastIndex = 0; 
             const linksInMessage = message.content.match(linkRegex);
             
+            if (!linksInMessage) return;
+
             // Cek apakah ada link di pesan yang TIDAK ada di daftar whitelist
             const containsBadLink = linksInMessage.some(link => {
                 return !whitelistedLinks.some(whiteLink => link.toLowerCase().includes(whiteLink.toLowerCase()));
@@ -49,7 +53,7 @@ module.exports = {
                 try {
                     await message.delete();
                     
-                    const warning = await message.channel.send(`⚠️ ${message.author}, Kamu tidak diizinkan mengirim sembarang link di server Cidro Janji! Hanya link TikTok dan Roblox Share tertentu yang diperbolehkan.`);
+                    const warning = await message.channel.send(`⚠️ ${message.author}, Kamu tidak diizinkan mengirim sembarang link di server Cidro Janji! Hanya link TikTok dan Roblox yang diperbolehkan.`);
                     
                     // Hapus pesan peringatan setelah 5 detik agar chat rapi
                     setTimeout(() => {
