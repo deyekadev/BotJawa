@@ -49,7 +49,7 @@ module.exports = {
                 try {
                     await message.delete();
                     
-                    const warning = await message.channel.send(`⚠️ ${message.author}, kamu tidak diizinkan mengirim sembarang link di server Cidro Janji! Hanya link TikTok dan Roblox Share tertentu yang diperbolehkan.`);
+                    const warning = await message.channel.send(`⚠️ ${message.author}, Kamu tidak diizinkan mengirim sembarang link di server Cidro Janji! Hanya link TikTok dan Roblox Share tertentu yang diperbolehkan.`);
                     
                     // Hapus pesan peringatan setelah 5 detik agar chat rapi
                     setTimeout(() => {
