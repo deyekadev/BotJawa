@@ -9,6 +9,6 @@ module.exports = {
         const sent = await message.reply('🏓 Sedang menghitung...');
         const latency = sent.createdTimestamp - message.createdTimestamp;
         
-        return sent.edit(`🏓 **Pong!**\n- Latensi Bot: \`${latency}ms\``);
+        return sent.edit(`🏓 **CIDRO JANJI IIIIHAAAAAAAAAAA**\n- Latensi Bot: \`${latency}ms\``);
     },
 };
