@@ -44,7 +44,9 @@ module.exports = {
             "panel murah",
             "hosting murah",
             "suntik followers",
-            "followers murah"
+            "followers murah",
+            "via"
+            
         ];
 
         const content = message.content.toLowerCase();
