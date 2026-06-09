@@ -1,38 +1,50 @@
-const autoResponses = [
-    {
-        trigger: ["drama", "derama", "drma"],
-        response: "KALAU ADA DRAMA SILAHKAN MENUJU KE <#1500295305239728188> MAS/MBA"
-    },
-    {
-        trigger: ["laser", "lser"],
-        response: "ADA LASER? WAH SILAHKAN MENUJU KE <#1500295305239728188> KAK"
-    },
-    {
-        trigger: ["keributan", "ribut", "rbut"],
-        response: "ADA DRAMA? WAH SILAHKAN MENUJU KE <#1500295305239728188> KAK"
-    },
-    {
-        trigger: ["cheater", "cheat"],
-        response: "ADA CHEATER SUNG KE <#1500295305239728188> KAK"
-    },
-    {
-        trigger: ["titan"],
-        response: "ADA TITAN? SUNG KE <#1500295305239728188> KAK"
-    }
-];
+const { Events } = require("discord.js");
+
+const cooldown = new Set();
 
 module.exports = {
-    name: "messageCreate",
+    name: Events.MessageCreate,
 
     async execute(message) {
-        if (message.author.bot) return;
+        try {
+            if (message.author.bot) return;
 
-        const content = message.content.toLowerCase();
+            const content = message.content.toLowerCase();
 
-        for (const item of autoResponses) {
-            if (item.trigger.includes(content)) {
-                return message.reply(item.response);
+            const triggers = {
+                drama: "📢 KALAU ADA DRAMA SILAHKAN MENUJU KE <#1500295305239728188> MAS/MBA",
+                laser: "📢 ADA LASER? WAH SILAHKAN MENUJU KE <#1500295305239728188> KAK",
+                cheater: "📢 ADA CHEATER? SUNG KE <#1500295305239728188> KAK",
+                ribut: "📢 ADA KERIBUTAN? SILAHKAN MENUJU KE <#1500295305239728188> KAK",
+                titan: "📢 ADA TITAN? SUNG KE <#1500295305239728188> KAK"
+            };
+
+            for (const trigger in triggers) {
+                if (content.includes(trigger)) {
+
+                    // Cooldown per trigger
+                    if (cooldown.has(trigger)) return;
+
+                    cooldown.add(trigger);
+
+                    setTimeout(() => {
+                        cooldown.delete(trigger);
+                    }, 10000);
+
+                    console.log(
+                        `[AUTO RESPON] ${message.author.tag} -> ${trigger}`
+                    );
+
+                    await message.reply({
+                        content: triggers[trigger]
+                    });
+
+                    return;
+                }
             }
+
+        } catch (err) {
+            console.error("Error Auto Response:", err);
         }
     }
 };
