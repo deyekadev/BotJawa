@@ -10,11 +10,11 @@ const autoResponses = [
     {
         trigger: ["keributan", "ribut", "rbut"],
         response: "ADA DRAMA? WAH SILAHKAN MENUJU KE <#1500295305239728188> KAK"
-    }
+    },
     {
         trigger: ["cheater", "cheat"],
         response: "ADA CHEATER SUNG KE <#1500295305239728188> KAK"
-    }
+    },
     {
         trigger: ["titan"],
         response: "ADA TITAN? SUNG KE <#1500295305239728188> KAK"
