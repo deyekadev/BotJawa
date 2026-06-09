@@ -9,6 +9,22 @@ module.exports = {
         try {
             if (message.author.bot) return;
 
+            // WHITELIST ROLE
+            const whitelistRoles = [
+                "1463866960436789411",
+                "1452202000593719346",
+                "1452199873989443717"
+            ];
+
+            if (
+                message.member &&
+                message.member.roles.cache.some(role =>
+                    whitelistRoles.includes(role.id)
+                )
+            ) {
+                return;
+            }
+
             const content = message.content.toLowerCase();
 
             const triggers = {
