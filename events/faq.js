@@ -25,6 +25,9 @@ module.exports = {
                 return;
             }
 
+            // HANYA BERJALAN DI CHANNEL TERTENTU
+            if (message.channel.id !== "1452194244881158144") return;
+
             const content = message.content.toLowerCase();
 
             const triggers = {
