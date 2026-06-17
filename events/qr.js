@@ -32,7 +32,7 @@ module.exports = {
       const gambarTrigger = new AttachmentBuilder("./images/qris.png"); // Sesuaikan nama file gambarmu
 
       message.reply({
-        content: "Wah, ada yang lagi emosi nih! 😡",
+        content: "Silahkan melakukan payment menggunakan QRIS yang sudah tertera disini",
         files: [gambarTrigger],
       });
     }
