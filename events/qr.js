@@ -1,4 +1,4 @@
-const { AttachmentBuilder, Events } = require("discord.js");
+const { AttachmentBuilder, EmbedBuilder, Events } = require("discord.js");
 
 module.exports = {
   name: Events.MessageCreate,
@@ -10,7 +10,7 @@ module.exports = {
     // 2. Ubah pesan jadi huruf kecil semua
     const pesan = message.content.toLowerCase();
 
-    // 3. FITUR UTAMA: Trigger Gambar Lokal dengan Whitelist Role
+    // 3. FITUR UTAMA: Trigger QRIS dengan Whitelist Role & Embed
     if (pesan === ".qr") {
       // Pastikan pesan dikirim di server (bukan dari DM pribadi ke bot)
       if (!message.member) return;
@@ -21,18 +21,27 @@ module.exports = {
       // Cek apakah user yang mengetik memiliki salah satu dari role di atas
       const hasAllowedRole = allowedRoles.some(roleId => message.member.roles.cache.has(roleId));
 
-      // Jika user TIDAK punya role-nya, hentikan proses (bisa diganti balasannya)
+      // Jika user TIDAK punya role-nya, hentikan proses
       if (!hasAllowedRole) {
-        return message.reply("Maaf, kamu tidak punya izin untuk menggunakan trigger ini! ❌");
-        // Catatan: Hapus baris 'return message.reply(...)' di atas dan ganti dengan 'return;' 
-        // saja kalau kamu mau bot diam saja tanpa membalas pesan error.
+        return message.reply("Maaf, kamu tidak punya izin untuk memunculkan QRIS! ❌");
       }
 
-      // Jika user punya role, lanjut kirim gambar
-      const gambarTrigger = new AttachmentBuilder("./images/qris.png"); // Sesuaikan nama file gambarmu
+      // Jika user punya role, lanjut siapkan gambar
+      const namaFile = "qris.png";
+      const gambarTrigger = new AttachmentBuilder(`./images/${qris}`);
 
+      // Membuat desain Embed untuk QRIS
+      const qrisEmbed = new EmbedBuilder()
+        .setColor("#ffA500") // Warna biru (bisa diganti sesuai tema server)
+        .setTitle("💳 Payment Gateway")
+        .setDescription("Silahkan melakukan payment menggunakan QRIS yang tertera di bawah ini.")
+        .setImage(`attachment://${qris}`) // Menampilkan gambar QRIS di dalam embed
+        .setTimestamp()
+        .setFooter({ text: "Sistem Pembayaran Otomatis" });
+
+      // Kirim embed beserta file gambarnya
       message.reply({
-        content: "Silahkan melakukan payment menggunakan QRIS yang sudah tertera disini",
+        embeds: [qrisEmbed],
         files: [gambarTrigger],
       });
     }
