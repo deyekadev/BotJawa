@@ -30,17 +30,13 @@ module.exports = {
       message.channel.send(`
 # 🎟️ PEMBELIAN CUSTOM TITLE
 
-Terima kasih telah membuka ticket pembelian Title Custom.
-💰 **Harga Custom Title: Rp500.000**
-
-Silakan tunggu admin untuk memberikan informasi pembayaran. Setelah melakukan transfer, kirimkan format berikut:
-**Username Roblox:**
-**Nama Pengirim:**
-**Bukti Transfer:** (foto/screenshot)
+Setelah melakukan transfer sejumlah **Rp 500.000**, kirimkan format berikut:
+Username Roblox:
+Nama Pengirim:
+Bukti Transfer: (foto/screenshot)
 
 ⚠️ Mohon pastikan data yang dikirim sudah benar agar proses verifikasi dapat dilakukan lebih cepat.
-Setelah pembayaran berhasil diverifikasi, admin akan menghubungi Anda untuk proses pemberian Title.
-Terima kasih❤️`);
+Setelah pembayaran berhasil diverifikasi, admin akan menghubungi Anda untuk proses pemberian Title.`);
     }
 
     // --- CONTOH COMMAND TAMBAHAN ---
