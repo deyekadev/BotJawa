@@ -1,49 +1,55 @@
 const { AttachmentBuilder, Events } = require("discord.js");
 
 module.exports = {
-  name: Events.MessageCreate,
-  once: false,
-  execute(message, client) {
-    // 1. Abaikan pesan dari bot lain
-    if (message.author.bot) return;
+  name: Events.MessageCreate,
+  once: false,
+  async execute(message, client) {
+    if (message.author.bot) return;
 
-    // 2. Ubah pesan jadi huruf kecil semua
-    const pesan = message.content.toLowerCase();
+    const pesan = message.content.toLowerCase();
 
-    // 3. FITUR UTAMA: Trigger Gambar Lokal dengan Whitelist Role
-    if (pesan === ".qr") {
-      // Pastikan pesan dikirim di server (bukan dari DM pribadi ke bot)
-      if (!message.member) return;
+    if (pesan === ".qr") {
+      if (!message.member) return;
 
-      // Daftar ID Role yang diizinkan
-      const allowedRoles = ["1452199873989443717", "1452202000593719346"];
+      const allowedRoles = ["1452199873989443717", "1452202000593719346"];
+      const hasAllowedRole = allowedRoles.some(roleId => message.member.roles.cache.has(roleId));
 
-      // Cek apakah user yang mengetik memiliki salah satu dari role di atas
-      const hasAllowedRole = allowedRoles.some(roleId => message.member.roles.cache.has(roleId));
+      if (!hasAllowedRole) {
+        return message.reply("Maaf, kamu tidak punya izin untuk menggunakan trigger ini! ❌");
+      }
 
-      // Jika user TIDAK punya role-nya, hentikan proses (bisa diganti balasannya)
-      if (!hasAllowedRole) {
-        return message.reply("Maaf, kamu tidak punya izin untuk menggunakan trigger ini! ❌");
-        // Catatan: Hapus baris 'return message.reply(...)' di atas dan ganti dengan 'return;' 
-        // saja kalau kamu mau bot diam saja tanpa membalas pesan error.
-      }
+      // Kirim gambar QRIS
+      const gambarTrigger = new AttachmentBuilder("./images/qris.png");
 
-      // Jika user punya role, lanjut kirim gambar
-      const gambarTrigger = new AttachmentBuilder("./images/qris.png"); // Sesuaikan nama file gambarmu
+      await message.reply({
+        content: "Silahkan melakukan payment menggunakan QRIS yang sudah tertera disini",
+        files: [gambarTrigger],
+      });
 
-      message.reply({
-        content: "Silahkan melakukan payment menggunakan QRIS yang sudah tertera disini",
-        files: [gambarTrigger],
-      });
-    }
+      // PESAN TAMBAHAN (Sistem Pembelian Custom Title)
+      message.channel.send(`
+# 🎟️ PEMBELIAN CUSTOM TITLE
 
-    // --- CONTOH COMMAND TAMBAHAN ---
-    if (pesan === ".format") {
-      message.reply("adawdawdadwadaw");
-    }
+Terima kasih telah membuka ticket pembelian Title Custom.
+💰 **Harga Custom Title: Rp500.000**
 
-    if (pesan === "!jawaparty") {
-      message.reply("Kuy ramaikan JAWA PARTY! 🔥");
-    }
-  },
+Silakan tunggu admin untuk memberikan informasi pembayaran. Setelah melakukan transfer, kirimkan format berikut:
+**Username Roblox:**
+**Nama Pengirim:**
+**Bukti Transfer:** (foto/screenshot)
+
+⚠️ Mohon pastikan data yang dikirim sudah benar agar proses verifikasi dapat dilakukan lebih cepat.
+Setelah pembayaran berhasil diverifikasi, admin akan menghubungi Anda untuk proses pemberian Title.
+Terima kasih❤️`);
+    }
+
+    // --- CONTOH COMMAND TAMBAHAN ---
+    if (pesan === ".format") {
+      message.reply("adawdawdadwadaw");
+    }
+
+    if (pesan === "!jawaparty") {
+      message.reply("Kuy ramaikan JAWA PARTY! 🔥");
+    }
+  },
 };
