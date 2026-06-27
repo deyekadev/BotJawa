@@ -1,17 +1,31 @@
 const { SlashCommandBuilder } = require('discord.js');
-global.afkUsers = new Map(); // Ini tempat "otak" bot menyimpan pesan AFK-mu
+
+// Inisialisasi Map global jika belum ada
+if (!global.afkUsers) {
+    global.afkUsers = new Map();
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('afk') // Ini perintah yang kamu ketik di Discord
+        .setName('afk')
         .setDescription('Set status AFK kamu')
         .addStringOption(option => 
             option.setName('alasan')
                 .setDescription('Alasan kamu AFK')
                 .setRequired(true)),
+    
     async execute(interaction) {
         const alasan = interaction.options.getString('alasan');
-        global.afkUsers.set(interaction.user.id, alasan); // Simpan pesanmu di memori
-        await interaction.reply({ content: `✅ Kamu sekarang AFK: **${alasan}**`, ephemeral: true });
-    },
+        
+        // Simpan ID user dan alasannya
+        global.afkUsers.set(interaction.user.id, {
+            alasan: alasan,
+            waktu: Date.now()
+        });
+
+        await interaction.reply({ 
+            content: `✅ Status AFK kamu telah diset: **${alasan}**`, 
+            ephemeral: false 
+        });
+    }
 };

@@ -3,16 +3,23 @@ module.exports = {
     execute(message) {
         if (message.author.bot) return;
 
-        // Jika ada orang mention user yang sedang AFK
-        const mentionedUser = message.mentions.users.first();
-        if (mentionedUser && global.afkUsers.has(mentionedUser.id)) {
-            const alasan = global.afkUsers.get(mentionedUser.id);
-            message.reply(`User **${mentionedUser.username}** lagi ngambek: *${alasan}*`);
+        // 1. LOGIKA DETEKSI MENTION (Dahulukan ini agar bot bisa kasih tau kalau orang yang di-tag AFK)
+        if (message.mentions.users.size > 0) {
+            message.mentions.users.forEach(user => {
+                if (global.afkUsers && global.afkUsers.has(user.id)) {
+                    const data = global.afkUsers.get(user.id);
+                    message.reply(`User **${user.username}** sedang AFK: *${data.alasan}*`)
+                        .catch(console.error);
+                }
+            });
         }
 
-        // Jika kamu chat kembali, bot hapus status AFK-mu
-        if (global.afkUsers.has(message.author.id)) {
+        // 2. LOGIKA REMOVE AFK (Baru lakukan ini setelah cek mention)
+        if (global.afkUsers && global.afkUsers.has(message.author.id)) {
             global.afkUsers.delete(message.author.id);
+            message.reply('👋 Kamu sudah kembali! Status AFK kamu telah dihapus.')
+                .then(msg => setTimeout(() => msg.delete(), 5000))
+                .catch(console.error);
         }
     }
 };

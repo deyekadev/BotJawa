@@ -13,7 +13,7 @@ const client = new Client({
   partials: [Partials.Channel]
 });
 
-// Setup Collection untuk menyimpan command
+// PENTING: Inisialisasi collection untuk simpan command
 client.commands = new Collection();
 
 // ----- Auto Load Commands -----
@@ -23,12 +23,9 @@ const commandFiles = fs.readdirSync(commandsPath).filter(f => f.endsWith(".js"))
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = require(filePath);
-  
   if (command.data && command.execute) {
     client.commands.set(command.data.name, command);
     console.log(`✅ Command loaded: ${file}`);
-  } else {
-    console.log(`⚠️ Command invalid: ${file}`);
   }
 }
 
@@ -39,7 +36,6 @@ const eventFiles = fs.readdirSync(eventsPath).filter(f => f.endsWith(".js"));
 for (const file of eventFiles) {
   const filePath = path.join(eventsPath, file);
   const event = require(filePath);
-
   if (event.name && event.execute) {
     if (event.once) {
       client.once(event.name, (...args) => event.execute(...args, client));
@@ -47,10 +43,7 @@ for (const file of eventFiles) {
       client.on(event.name, (...args) => event.execute(...args, client));
     }
     console.log(`✅ Event loaded: ${file}`);
-  } else {
-    console.log(`⚠️ File event invalid: ${file}`);
   }
 }
 
-// ----- Login -----
 client.login(process.env.TOKEN);
