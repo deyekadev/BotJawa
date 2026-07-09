@@ -45,25 +45,53 @@ module.exports = {
         const member = message.mentions.members.first();
 
         if (!member) {
-            return message.reply(`❌ Contoh:\n.${command} @user`);
+            const reply = await message.reply(`❌ Contoh:\n.${command} @user`);
+
+            setTimeout(() => {
+                reply.delete().catch(() => {});
+                message.delete().catch(() => {});
+            }, 5000);
+
+            return;
         }
 
         const role = message.guild.roles.cache.get(roles[command]);
 
         if (!role) {
-            return message.reply("❌ Role tidak ditemukan.");
+            const reply = await message.reply("❌ Role tidak ditemukan.");
+
+            setTimeout(() => {
+                reply.delete().catch(() => {});
+                message.delete().catch(() => {});
+            }, 5000);
+
+            return;
         }
 
         try {
             await member.roles.add(role);
 
-            return message.reply(
+            // Hapus pesan command admin
+            await message.delete().catch(() => {});
+
+            // Kirim balasan bot
+            const reply = await message.channel.send(
                 `✅ Berhasil memberikan role **${role.name}** kepada ${member}.`
             );
 
+            // Hapus balasan bot setelah 5 detik
+            setTimeout(() => {
+                reply.delete().catch(() => {});
+            }, 5000);
+
         } catch (err) {
             console.error(err);
-            return message.reply("❌ Gagal memberikan role.");
+
+            const reply = await message.reply("❌ Gagal memberikan role.");
+
+            setTimeout(() => {
+                reply.delete().catch(() => {});
+            }, 5000);
         }
     }
 };
