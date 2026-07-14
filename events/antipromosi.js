@@ -46,7 +46,8 @@ module.exports = {
             "suntik followers",
             "followers murah",
             "via",
-            "yobux"
+            "yobux",
+            "joki"
             
         ];
 
