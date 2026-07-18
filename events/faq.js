@@ -36,7 +36,7 @@ module.exports = {
                 cheater: "📢 ADA CHEATER? SUNG KE <#1500295305239728188> KAK",
                 ribut: "📢 ADA KERIBUTAN? SILAHKAN MENUJU KE <#1500295305239728188> KAK",
                 titan: "📢 ADA TITAN? SUNG KE <#1500295305239728188> KAK",
-                vip : "📢 Sebagai bentuk kompensasi atas kendala yang terjadi sebelumnya, kami telah menyediakan klaim VIP GRATIS selama 1 bulan (11 Juni 2026 - 11 Juli 2026).Perlu kami informasikan bahwa periode klaim gratis tersebut telah berakhir sesuai dengan jadwal yang telah ditentukan. Oleh karena itu, apabila saat ini anda sudah TIDAK dapat melakukan klaim VIP GRATIS, hal tersebut karena masa klaim telah selesai, bukan karena adanya kesalahan sistem.Terima kasih atas pengertian dan dukungan dari seluruh komunitas❤️"
+                vip : "📢 Sebagai bentuk kompensasi atas kendala yang terjadi sebelumnya, kami telah menyediakan klaim VIP GRATIS selama 1 bulan (11 Juni 2026 - 11 Juli 2026). Perlu kami informasikan bahwa periode klaim gratis tersebut telah berakhir sesuai dengan jadwal yang telah ditentukan. Oleh karena itu, apabila saat ini anda sudah TIDAK dapat melakukan klaim VIP GRATIS, hal tersebut karena masa klaim telah selesai, bukan karena adanya kesalahan sistem. Terima kasih atas pengertian dan dukungan dari seluruh komunitas❤️"
             };
 
             for (const trigger in triggers) {
