@@ -45,7 +45,6 @@ module.exports = {
             "hosting murah",
             "suntik followers",
             "followers murah",
-            "via",
             "yobux",
             "joki"
             
