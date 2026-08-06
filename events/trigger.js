@@ -7,9 +7,9 @@ module.exports = {
 
 		const content = message.content.trim();
 
-		if (content === '.hm') {
+		if (content === '.rek') {
 			try {
-				const rekMessage = '# #PRAY FOR ME.';
+				const rekMessage = 'Mandiri 1710017138903 - ALMASITA JIHAN.';
 				return message.channel.send(rekMessage);
 			} catch (err) {
 				console.error('Gagal mengirim pesan .rek:', err);
