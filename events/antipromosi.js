@@ -6,6 +6,19 @@ module.exports = {
         if (!message.guild) return;
 
         // =========================
+        // CHANNEL TEMPAT ANTI PROMOSI AKTIF
+        // =========================
+        const allowedChannels = [
+            "1452194244881158144",
+            "1453875683544531066",
+            "1455610504205701280",
+            "1455610560161906760"
+        ];
+
+        // Kalau bukan di channel yang ditentukan, abaikan
+        if (!allowedChannels.includes(message.channel.id)) return;
+
+        // =========================
         // ROLE WHITELIST
         // =========================
         const whitelistRoles = [
@@ -47,7 +60,6 @@ module.exports = {
             "followers murah",
             "yobux",
             "joki"
-            
         ];
 
         const content = message.content.toLowerCase();
