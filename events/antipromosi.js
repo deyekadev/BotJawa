@@ -59,7 +59,11 @@ module.exports = {
             "suntik followers",
             "followers murah",
             "yobux",
-            "joki"
+            "joki",
+            "visend",
+            "visen",
+            "ready",
+            "redi"
         ];
 
         const content = message.content.toLowerCase();
