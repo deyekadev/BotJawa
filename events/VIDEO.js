@@ -1,52 +1,39 @@
-const path = require("path");
 const { AttachmentBuilder } = require("discord.js");
+const path = require("path");
 
 module.exports = (client) => {
-
-    // Role yang diizinkan
-    const ALLOWED_ROLES = [
-        "1452199873989443717",
-        "1452202000593719346"
-    ];
-
-    const TRIGGERS = {
-        tutor: {
-            text: "INI KA YA TUTORNYA",
-            video: "TUTOR.mov"
-        }
-    };
 
     client.on("messageCreate", async (message) => {
 
         if (message.author.bot) return;
-        if (!message.guild) return;
 
-        // Cek role
-        const hasPermission = message.member.roles.cache.some(role =>
-            ALLOWED_ROLES.includes(role.name)
+        // Role yang boleh trigger
+        const ROLE_IDS = [
+            "1452199873989443717",
+            "1452202000593719346"
+        ];
+
+        const hasRole = message.member?.roles.cache.some(role =>
+            ROLE_IDS.includes(role.id)
         );
 
-        if (!hasPermission) return;
+        if (!hasRole) return;
 
-        const trigger = TRIGGERS[message.content.toLowerCase()];
+        if (message.content.toLowerCase() === ".tutor") {
 
-        if (!trigger) return;
+            const videoPath = path.join(
+                process.cwd(),
+                "VIDEO",
+                "TUTOR.mov"
+            );
 
-        const videoPath = path.join(
-            process.cwd(),
-            "VIDEO",
-            trigger.video
-        );
-
-        try {
             await message.channel.send({
-                content: trigger.text,
+                content: "INI YA KA TUTORNYA",
                 files: [
                     new AttachmentBuilder(videoPath)
                 ]
             });
-        } catch (err) {
-            console.error("[TRIGGER ERROR]", err);
+
         }
 
     });
