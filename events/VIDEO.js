@@ -12,7 +12,7 @@ module.exports = (client) => {
     const TRIGGERS = {
         tutor: {
             text: "INI KA YA TUTORNYA",
-            video: "TUTOR.MOV"
+            video: "TUTOR.mov"
         }
     };
 
