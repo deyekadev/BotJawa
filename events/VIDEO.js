@@ -1,41 +1,35 @@
-const { AttachmentBuilder } = require("discord.js");
+const { Events, AttachmentBuilder } = require("discord.js");
 const path = require("path");
 
-module.exports = (client) => {
+const ALLOWED_ROLE_IDS = [
+    "1463866960436789411", // Admin
 
-    client.on("messageCreate", async (message) => {
+];
+
+module.exports = {
+    name: Events.MessageCreate,
+
+    async execute(message) {
 
         if (message.author.bot) return;
+        if (!message.guild) return;
 
-        // Role yang boleh trigger
-        const ROLE_IDS = [
-            "1452199873989443717",
-            "1452202000593719346"
-        ];
+        if (message.content.toLowerCase() !== ".tutor") return;
 
-        const hasRole = message.member?.roles.cache.some(role =>
-            ROLE_IDS.includes(role.id)
+        const hasRole = message.member.roles.cache.some(role =>
+            ALLOWED_ROLE_IDS.includes(role.id)
         );
 
         if (!hasRole) return;
+        const videoPath = path.join(
+            process.cwd(),
+            "VIDEO",
+            "TUTOR.mov"
+        );
 
-        if (message.content.toLowerCase() === ".tutor") {
-
-            const videoPath = path.join(
-                process.cwd(),
-                "VIDEO",
-                "TUTOR.mov"
-            );
-
-            await message.channel.send({
-                content: "INI YA KA TUTORNYA",
-                files: [
-                    new AttachmentBuilder(videoPath)
-                ]
-            });
-
-        }
-
-    });
-
+        await message.channel.send({
+            content: "INI YA KA TUTORNYA",
+            files: [new AttachmentBuilder(videoPath)]
+        });
+    }
 };
