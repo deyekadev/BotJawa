@@ -9,7 +9,7 @@ module.exports = {
         const content = message.content.toLowerCase();
 
         if (content === ".sv") {
-            return message.reply("https://www.roblox.com/share?code=f19431897186a844a12090cff198096f&type=Server");
+            return message.reply("https://www.roblox.com/share?code=fcef15c0a9f2fd49b6b5508ef526febc&type=Server");
         }
     }
 };
