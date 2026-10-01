@@ -63,7 +63,9 @@ module.exports = {
             "visend",
             "visen",
             "ready",
-            "redi"
+            "redi",
+            "rbx",
+            "bio",
         ];
 
         const content = message.content.toLowerCase();
