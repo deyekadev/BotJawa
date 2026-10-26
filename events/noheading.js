@@ -3,7 +3,7 @@ const { Events } = require('discord.js');
 
 // Ganti dengan ID role yang diizinkan
 const ALLOWED_ROLE_IDS = [
-    'ISI_ID_ROLE_YANG_DIIZINKAN'
+    '1452202000593719346'
 ];
 
 module.exports = {
