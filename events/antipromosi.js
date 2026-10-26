@@ -66,6 +66,10 @@ module.exports = {
             "redi",
             "rbx",
             "bio",
+            "ridi",
+            "yobux.id",
+            "yobux.com",
+            "obux",
         ];
 
         const content = message.content.toLowerCase();
