@@ -3,15 +3,16 @@ const fs = require("fs");
 const path = require("path");
 const { Client, GatewayIntentBits, Partials, Events, Collection } = require("discord.js");
 
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent
   ],
   partials: [Partials.Channel]
 });
+
 
 // PENTING: Inisialisasi collection untuk simpan command
 client.commands = new Collection();
