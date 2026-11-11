@@ -10,7 +10,7 @@ module.exports = {
             global.afkUsers.delete(interaction.user.id);
             await interaction.reply({ content: 'Status AFK kamu sudah dihapus!', ephemeral: true });
         } else {
-            await interaction.reply({ content: 'Kamu tidak sedang dalam status AFK.', ephemeral: true });
+            await interaction.reply({ content: 'Kamu tidak sedang dalam status AFK..', ephemeral: true });
         }
     }
 };
