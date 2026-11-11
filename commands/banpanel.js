@@ -44,10 +44,10 @@ module.exports = {
       .setColor(0x2496ed)
       .setTitle("🔎 ROBLOX USN BAN LIST SEARCH")
       .setDescription([
-        "Gunakan tombol di bawah untuk mencari username Roblox di database Ban List.",
+        "Gunakan tombol di bawah atau command /ban username untuk mencari username Roblox di database Ban List.",
         "",
-        "• Masukkan username Roblox secara tepat.",
         "• Hasil pencarian hanya terlihat oleh kamu.",
+        "• Hasil dapat menampilkan avatar Roblox dan gambar bukti ban.",
         "• Akses dibatasi untuk role yang diizinkan.",
       ].join("\n"))
       .setFooter({ text: "Ban List Search System" });
