@@ -13,6 +13,7 @@ module.exports = {
             "1453875683544531066",
             "1455610504205701280",
             "1455610560161906760"
+            
         ];
 
         // Kalau bukan di channel yang ditentukan, abaikan
