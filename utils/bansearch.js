@@ -51,12 +51,12 @@ function parseBanRecord(message) {
   // Contoh:
   // ;timeban Username 30d Alasan ban
   // ;globalban Username Alasan ban
-  const commandLine = lines.find((line) => /^;?\s*(timeban|globalban)\b/i.test(line));
+  const commandLine = lines.find((line) => /^[;:]?\s*(timeban|globalban)\b/i.test(line));
 
   if (!commandLine) return null;
 
   const match = commandLine.match(
-    /^;?\s*(timeban|globalban)\s+([A-Za-z0-9_]{3,20})(?:\s+(\d+\s*(?:s|m|h|d|w|mo|M|y)))?(?:\s+([\s\S]*))?$/i
+    /^[;:]?\s*(timeban|globalban)\s+([A-Za-z0-9_]{3,20})(?:\s+(\d+\s*(?:s|m|h|d|w|mo|M|y)))?(?:\s+([\s\S]*))?$/i
   );
 
   if (!match) return null;
