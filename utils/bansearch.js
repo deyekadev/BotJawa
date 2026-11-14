@@ -46,76 +46,40 @@ function collectEvidenceImages(message) {
 function parseBanRecord(message) {
   const text = getMessageText(message);
   const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+
+  // Format yang dipakai tetap ;timeban dan ;globalban.
+  // Contoh:
+  // ;timeban Username 30d Alasan ban
+  // ;globalban Username Alasan ban
   const commandLine = lines.find((line) => /^;?\s*(timeban|globalban)\b/i.test(line));
 
-  if (commandLine) {
-    const match = commandLine.match(
-      /^;?\s*(timeban|globalban)\s+([A-Za-z0-9_]{3,20})(?:\s+(\d+\s*[smhdwMy]?))?(?:\s+([\s\S]*))?$/i
-    );
+  if (!commandLine) return null;
 
-    if (match) {
-      const banType = match[1].toUpperCase();
-      const username = match[2];
-      const possibleDuration = (match[3] || "").replace(/\s+/g, "");
-      const reason = (match[4] || "").trim();
-      const hasDuration = /^\d+[smhdwMy]$/i.test(possibleDuration);
+  const match = commandLine.match(
+    /^;?\s*(timeban|globalban)\s+([A-Za-z0-9_]{3,20})(?:\s+(\d+\s*(?:s|m|h|d|w|mo|M|y)))?(?:\s+([\s\S]*))?$/i
+  );
 
-      return {
-        messageId: message.id,
-        username,
-        banType,
-        duration: banType === "GLOBALBAN"
-          ? "Permanent"
-          : (hasDuration ? possibleDuration : "Not specified"),
-        reason: banType === "TIMEBAN" && !hasDuration
-          ? [possibleDuration, reason].filter(Boolean).join(" ").trim() || "Not specified"
-          : reason || (banType === "GLOBALBAN" ? "Permanent ban" : "Not specified"),
-        admin:
-          message.member?.displayName ||
-          message.author?.globalName ||
-          message.author?.username ||
-          "Unknown",
-        date: message.createdAt
-          ? message.createdAt.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
-          : "",
-        messageUrl: message.url,
-        evidenceImages: collectEvidenceImages(message),
-        createdTimestamp: message.createdTimestamp || Date.now(),
-      };
-    }
-  }
+  if (!match) return null;
 
-  const getLabel = (labels) => {
-    const escaped = labels.map((label) =>
-      label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-    );
-    const regex = new RegExp(
-      `(?:^|\\n|\\|)\\s*(?:${escaped.join("|")})\\s*[:=：-]\\s*([^\\n|]+)`,
-      "i"
-    );
-    const found = text.match(regex);
-    return found ? found[1].trim() : "";
-  };
-
-  const username = getLabel(["Roblox Username", "Username", "USN", "Player", "User"]);
-  if (!username) return null;
+  const banType = match[1].toUpperCase();
+  const username = match[2];
+  const duration = (match[3] || "").replace(/\s+/g, "");
+  const reason = (match[4] || "").trim();
 
   return {
     messageId: message.id,
     username,
-    banType: getLabel(["Ban Type", "Type"]) || "Not specified",
-    duration: getLabel(["Duration", "Time", "Durasi"]) || "Not specified",
-    reason: getLabel(["Ban Reason", "Reason", "Alasan"]) || "Not specified",
+    banType,
+    duration: banType === "GLOBALBAN" ? "Permanent" : (duration || "Not specified"),
+    reason: reason || (banType === "GLOBALBAN" ? "Permanent ban" : "Not specified"),
     admin:
-      getLabel(["Admin", "Banned By", "Moderator", "Staff"]) ||
       message.member?.displayName ||
+      message.author?.globalName ||
       message.author?.username ||
       "Unknown",
-    date:
-      getLabel(["Ban Date", "Date", "Tanggal"]) ||
-      (message.createdAt
-        ? message.createdAt.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
-        : ""),
+    date: message.createdAt
+      ? message.createdAt.toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
+      : "",
     messageUrl: message.url,
     evidenceImages: collectEvidenceImages(message),
     createdTimestamp: message.createdTimestamp || Date.now(),
@@ -137,11 +101,11 @@ function removeRecord(messageId) {
 }
 
 function applyUpsert(message) {
-  if (!message?.id) return;
+  if (!message?.id) return false;
   removeRecord(message.id);
 
   const record = parseBanRecord(message);
-  if (!record) return;
+  if (!record) return false;
 
   cacheState.recordsByMessage.set(message.id, record);
   const key = record.username.toLocaleLowerCase("en-US");
@@ -149,6 +113,7 @@ function applyUpsert(message) {
     cacheState.recordsByUsername.set(key, new Map());
   }
   cacheState.recordsByUsername.get(key).set(message.id, record);
+  return true;
 }
 
 function applyDelete(messageId) {
@@ -165,11 +130,16 @@ function queueOrApply(operation) {
 }
 
 function isSourceChannel(channelId) {
-  return Boolean(
-    channelId &&
-    process.env.BANLIST_CHANNEL_ID &&
-    channelId === process.env.BANLIST_CHANNEL_ID.trim()
-  );
+  const configuredId = (process.env.BANLIST_CHANNEL_ID || "").trim();
+  return Boolean(channelId && configuredId && channelId === configuredId);
+}
+
+function getMaxScan() {
+  const raw = String(process.env.BANLIST_MAX_SCAN ?? "0").trim();
+  const parsed = Number.parseInt(raw, 10);
+  // 0 berarti scan seluruh riwayat yang dapat diakses bot.
+  // Nilai positif membatasi jumlah pesan untuk server yang sangat besar.
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
 async function initializeBanCache(client, force = false) {
@@ -197,22 +167,25 @@ async function initializeBanCache(client, force = false) {
       throw new Error("Channel Ban List tidak ditemukan atau bukan text channel.");
     }
 
-    const maxScan = Math.max(
-      100,
-      Number.parseInt(process.env.BANLIST_MAX_SCAN || "5000", 10) || 5000
-    );
-
+    const maxScan = getMaxScan();
     const loadedByMessage = new Map();
     let before;
     let scanned = 0;
+    let lastProgressLog = 0;
 
-    console.log(`[BAN CACHE] Memuat maksimal ${maxScan} pesan dari #${channel.name || channelId}...`);
+    console.log(
+      `[BAN CACHE] Memuat ${maxScan ? `maksimal ${maxScan.toLocaleString("id-ID")}` : "SELURUH"} pesan dari #${channel.name || channelId}...`
+    );
 
-    while (scanned < maxScan) {
+    // Ambil riwayat per 100 pesan sampai batas tercapai atau riwayat habis.
+    // discord.js menangani Discord API rate limits pada fetch.
+    while (!maxScan || scanned < maxScan) {
+      const remaining = maxScan ? maxScan - scanned : 100;
       const batch = await channel.messages.fetch({
-        limit: Math.min(100, maxScan - scanned),
+        limit: Math.min(100, remaining),
         ...(before ? { before } : {}),
       });
+
       if (!batch.size) break;
 
       const messages = [...batch.values()].sort(
@@ -226,6 +199,12 @@ async function initializeBanCache(client, force = false) {
 
       scanned += batch.size;
       before = messages[messages.length - 1].id;
+
+      if (scanned - lastProgressLog >= 5000) {
+        lastProgressLog = scanned;
+        console.log(`[BAN CACHE] Progress: ${scanned.toLocaleString("id-ID")} pesan dipindai, ${loadedByMessage.size.toLocaleString("id-ID")} record ditemukan.`);
+      }
+
       if (batch.size < 100) break;
     }
 
@@ -242,6 +221,8 @@ async function initializeBanCache(client, force = false) {
     }
 
     cacheState.scanned = scanned;
+
+    // Terapkan pesan baru/edit/delete yang masuk saat pemindaian berlangsung.
     for (const operation of cacheState.pendingMutations) {
       if (operation.type === "delete") applyDelete(operation.messageId);
       else applyUpsert(operation.message);
@@ -253,7 +234,7 @@ async function initializeBanCache(client, force = false) {
     cacheState.error = null;
 
     console.log(
-      `[BAN CACHE] Selesai: ${cacheState.recordsByMessage.size} record dari ${scanned} pesan.`
+      `[BAN CACHE] SELESAI: ${cacheState.recordsByMessage.size.toLocaleString("id-ID")} record dari ${scanned.toLocaleString("id-ID")} pesan.`
     );
     return getCacheStatus();
   })();
@@ -308,19 +289,40 @@ async function getCachedBanRecord(client, username) {
   };
 }
 
-function handleBanMessageCreate(message) {
-  if (!isSourceChannel(message?.channelId)) return;
-  queueOrApply({ type: "upsert", message });
+async function handleBanMessageCreate(message) {
+  const channelId = message?.channelId || message?.channel?.id;
+  if (!isSourceChannel(channelId)) return;
+
+  const fullMessage = message?.partial
+    ? await message.fetch().catch((error) => {
+        console.error("[BAN CACHE] Gagal mengambil pesan baru partial:", error.message);
+        return null;
+      })
+    : message;
+
+  if (!fullMessage) return;
+  const isBanRecord = parseBanRecord(fullMessage);
+  queueOrApply({ type: "upsert", message: fullMessage });
+
+  if (isBanRecord) {
+    console.log(`[BAN CACHE] Pesan baru terdeteksi: ${isBanRecord.banType} ${isBanRecord.username}`);
+  }
 }
 
 async function handleBanMessageUpdate(_oldMessage, newMessage) {
-  if (!isSourceChannel(newMessage?.channelId)) return;
-  const message = newMessage.partial ? await newMessage.fetch().catch(() => null) : newMessage;
+  const channelId = newMessage?.channelId || newMessage?.channel?.id;
+  if (!isSourceChannel(channelId)) return;
+
+  const message = newMessage.partial
+    ? await newMessage.fetch().catch(() => null)
+    : newMessage;
+
   if (message) queueOrApply({ type: "upsert", message });
 }
 
 function handleBanMessageDelete(message) {
-  if (!isSourceChannel(message?.channelId)) return;
+  const channelId = message?.channelId || message?.channel?.id;
+  if (!isSourceChannel(channelId)) return;
   queueOrApply({ type: "delete", messageId: message.id });
 }
 
