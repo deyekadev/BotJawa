@@ -7,6 +7,8 @@ const {
   ButtonStyle,
 } = require("discord.js");
 
+const config = require("../config");
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("banpanel")
@@ -28,14 +30,14 @@ module.exports = {
       });
     }
 
-    const configuredChannelId = (process.env.BANSEARCH_PANEL_CHANNEL_ID || "").trim();
+    const configuredChannelId = String(config.banlist.panelChannelId || "").trim();
     const targetChannel = configuredChannelId
       ? await interaction.guild.channels.fetch(configuredChannelId).catch(() => null)
       : interaction.channel;
 
     if (!targetChannel?.isTextBased() || !targetChannel.send) {
       return interaction.reply({
-        content: "Channel panel tidak ditemukan. Periksa BANSEARCH_PANEL_CHANNEL_ID di .env.",
+        content: "Channel panel tidak ditemukan. Periksa banlist.panelChannelId di config.js.",
         ephemeral: true,
       });
     }

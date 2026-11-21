@@ -1,3 +1,5 @@
+const config = require("../config");
+
 const cacheState = {
   channelId: null,
   ready: false,
@@ -130,12 +132,12 @@ function queueOrApply(operation) {
 }
 
 function isSourceChannel(channelId) {
-  const configuredId = (process.env.BANLIST_CHANNEL_ID || "").trim();
+  const configuredId = String(config.banlist.channelId || "").trim();
   return Boolean(channelId && configuredId && channelId === configuredId);
 }
 
 function getMaxScan() {
-  const raw = String(process.env.BANLIST_MAX_SCAN ?? "0").trim();
+  const raw = String(config.banlist.maxScan ?? "0").trim();
   const parsed = Number.parseInt(raw, 10);
   // 0 berarti scan seluruh riwayat yang dapat diakses bot.
   // Nilai positif membatasi jumlah pesan untuk server yang sangat besar.
@@ -143,8 +145,8 @@ function getMaxScan() {
 }
 
 async function initializeBanCache(client, force = false) {
-  const channelId = (process.env.BANLIST_CHANNEL_ID || "").trim();
-  if (!channelId) throw new Error("BANLIST_CHANNEL_ID belum diatur di .env");
+  const channelId = String(config.banlist.channelId || "").trim();
+  if (!channelId) throw new Error("banlist.channelId belum diatur di config.js");
 
   if (!force && cacheState.ready && cacheState.channelId === channelId) {
     return getCacheStatus();

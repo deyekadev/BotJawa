@@ -75,8 +75,15 @@ module.exports = {
 
         const content = message.content.toLowerCase();
 
+        // FIX: cocokkan sebagai kata utuh, bukan potongan kata.
+        // Contoh: "bio" tidak lagi kena di "biologi", "ready" tidak kena di "already".
+        const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
         const foundWord = bannedWords.find(word =>
-            content.includes(word)
+            new RegExp(
+                `(?<![\\p{L}\\p{N}])${escapeRegex(word)}(?![\\p{L}\\p{N}])`,
+                "u"
+            ).test(content)
         );
 
         if (foundWord) {

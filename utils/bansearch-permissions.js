@@ -1,7 +1,8 @@
+const config = require("../config");
+
 function isAllowedRole(interaction) {
-  const allowedRoleIds = (process.env.BANSEARCH_ROLE_IDS || "")
-    .split(",")
-    .map((id) => id.trim())
+  const allowedRoleIds = (config.banlist.allowedRoleIds || [])
+    .map((id) => String(id).trim())
     .filter(Boolean);
 
   if (!allowedRoleIds.length) return false;

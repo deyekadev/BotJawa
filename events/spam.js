@@ -9,7 +9,7 @@ module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         // Abaikan bot atau pesan yang merupakan command !ping
-        if (message.author.bot || message.content === '!ping') return;
+        if (message.author.bot || !message.guild || message.content === '!ping') return;
 
         if (usersMap.has(message.author.id)) {
             const userData = usersMap.get(message.author.id);
@@ -27,16 +27,19 @@ module.exports = {
                 usersMap.set(message.author.id, userData);
             } else {
                 msgCount++;
+                // FIX: selalu simpan hitungan terbaru. Sebelumnya hanya disimpan
+                // saat < LIMIT, sehingga peringatan terkirim di tiap pesan dan
+                // pesan spam tidak pernah dihapus.
+                userData.msgCount = msgCount;
+                usersMap.set(message.author.id, userData);
+
                 if (msgCount === LIMIT) {
-                    message.reply("⚠️ **Anti-Spam:** Jangan kirim pesan terlalu cepat!");
+                    message.reply("⚠️ **Anti-Spam:** Jangan kirim pesan terlalu cepat!").catch(() => {});
                 } else if (msgCount > LIMIT) {
                     // Cek apakah bot punya izin menghapus pesan
                     if (message.deletable) {
                         await message.delete().catch(() => {});
                     }
-                } else {
-                    userData.msgCount = msgCount;
-                    usersMap.set(message.author.id, userData);
                 }
             }
         } else {

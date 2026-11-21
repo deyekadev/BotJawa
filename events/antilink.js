@@ -32,8 +32,19 @@ module.exports = {
         if (!links) return;
 
         for (const link of links) {
+            // FIX: periksa hostname sebenarnya, bukan sekadar teks yang memuat domain.
+            // Sebelumnya "evil.com/?x=youtube.com" lolos.
+            let host;
+            try {
+                const cleaned = link.replace(/[)\]}>.,!?;:'"]+$/, "");
+                const url = new URL(/^https?:\/\//i.test(cleaned) ? cleaned : `https://${cleaned}`);
+                host = url.hostname.toLowerCase();
+            } catch {
+                continue; // bukan URL valid, bukan link yang bisa diklik
+            }
+
             const allowed = allowedDomains.some(domain =>
-                link.toLowerCase().includes(domain)
+                host === domain || host.endsWith("." + domain)
             );
 
             if (!allowed) {
