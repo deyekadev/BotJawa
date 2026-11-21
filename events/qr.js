@@ -1,4 +1,5 @@
 const { AttachmentBuilder, Events } = require("discord.js");
+const config = require("../config");
 
 module.exports = {
   name: Events.MessageCreate,
@@ -11,7 +12,7 @@ module.exports = {
     if (pesan === ".qr") {
       if (!message.member) return;
 
-      const allowedRoles = ["1452199873989443717", "1452202000593719346"];
+      const allowedRoles = config.roles.admin;
       const hasAllowedRole = allowedRoles.some(roleId => message.member.roles.cache.has(roleId));
 
       if (!hasAllowedRole) {

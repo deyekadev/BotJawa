@@ -1,21 +1,9 @@
 const { Events } = require("discord.js");
+const config = require("../config");
 
-// ===========================
-// ROLE YANG BOLEH MENGGUNAKAN COMMAND
-// ===========================
-const whitelistRoles = [
-    "1452202000593719346",
-    "1452199873989443717"
-];
-
-// ===========================
-// ROLE YANG AKAN DIBERIKAN
-// ===========================
-const roles = {
-    raja: "1524553799329513514",
-    sultan: "1524554008776413356",
-    donatur: "1524565078303572129"
-};
+// Role yang boleh memakai command, dan role yang diberikan (lihat config.js)
+const whitelistRoles = config.roles.admin;
+const roles = config.roles.grants;
 
 module.exports = {
     name: Events.MessageCreate,

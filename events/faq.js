@@ -1,4 +1,5 @@
 const { Events } = require("discord.js");
+const config = require("../config");
 
 const cooldown = new Set();
 
@@ -10,11 +11,7 @@ module.exports = {
             if (message.author.bot) return;
 
             // WHITELIST ROLE
-            const whitelistRoles = [
-                "1463866960436789411",
-                "1452202000593719346",
-                "1452199873989443717"
-            ];
+            const whitelistRoles = config.roles.admin;
 
             if (
                 message.member &&

@@ -1,3 +1,5 @@
+const config = require("../config");
+
 module.exports = {
     name: "messageCreate",
 
@@ -5,11 +7,7 @@ module.exports = {
         if (message.author.bot) return;
         if (!message.guild) return;
 
-        const whitelistRoles = [
-            "1463866960436789411", // Admin
-            "1452199873989443717",
-            "1452202000593719346"  // Moderator
-        ];
+        const whitelistRoles = config.roles.admin;
 
         const allowedDomains = [
             "youtube.com",

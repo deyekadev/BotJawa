@@ -1,3 +1,5 @@
+const config = require("../config");
+
 module.exports = {
     name: "messageCreate",
 
@@ -13,11 +15,7 @@ module.exports = {
         // =========================
         // ROLE WHITELIST
         // =========================
-        const whitelistRoles = [
-            "1452199873989443717", // Admin
-            "1463866960436789411",
-            "1452202000593719346"  // Moderator
-        ];
+        const whitelistRoles = config.roles.admin;
 
         const hasRole = message.member.roles.cache.some(role =>
             whitelistRoles.includes(role.id)

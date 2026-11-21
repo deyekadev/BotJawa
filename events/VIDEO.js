@@ -1,10 +1,8 @@
 const { Events, AttachmentBuilder } = require("discord.js");
 const path = require("path");
+const config = require("../config");
 
-const ALLOWED_ROLE_IDS = [
-    "1463866960436789411", // Admin
-
-];
+const ALLOWED_ROLE_IDS = config.roles.admin;
 
 module.exports = {
     name: Events.MessageCreate,

@@ -1,10 +1,9 @@
 
 const { Events } = require('discord.js');
+const config = require('../config');
 
-// Role yang DIIZINKAN menggunakan heading
-const ALLOWED_ROLE_IDS = [
-    '1452202000593719346'
-];
+// Role yang DIIZINKAN menggunakan heading (lihat config.js)
+const ALLOWED_ROLE_IDS = config.roles.admin;
 
 // Waktu pesan peringatan sebelum dihapus (ms)
 const DELETE_WARNING_AFTER = 5000;
