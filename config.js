@@ -10,6 +10,10 @@ module.exports = {
     // .qr, .rek, .tutor, bebas dari antilink/antipromosi/faq, dan boleh memakai heading (#).
     admin: ["1452202000593719346"],
 
+    // Pembersih New Mem: role New Mem dilepas kalau member sudah punya Sobat Cidro
+    newMember: "1544406468835414028",
+    sobatCidro: "1463882981050548284",
+
     // Role yang diberikan oleh .raja / .sultan / .donatur
     grants: {
       raja: "1524553799329513514",

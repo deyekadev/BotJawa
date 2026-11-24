@@ -24,4 +24,4 @@ async function requireAdmin(interaction) {
   return false;
 }
 
-module.exports = { isAdmin, requireAdmin };
+module.exports = { getRoleIds, isAdmin, requireAdmin };
