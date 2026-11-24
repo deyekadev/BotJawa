@@ -2,7 +2,7 @@
 //
 //   node scripts/setup-automod.js                 (bot ada di satu server)
 //   node scripts/setup-automod.js <ID_SERVER>     (bot ada di banyak server)
-//   tambahkan --semua-channel kalau anti-promosi mau berlaku di semua channel
+//   Semua aturan hanya aktif di kategori yang tercantum di config.automod.categoryIds.
 //
 // Bot harus punya izin "Manage Server". Aman dijalankan ulang: aturan dengan
 // nama yang sama diperbarui, bukan digandakan.
@@ -10,7 +10,7 @@
 require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
 const { Client, GatewayIntentBits, Events } = require("discord.js");
 const config = require("../config");
-const { buildLinkRule, buildHeadingRule, buildPromoRule } = require("../utils/automod-rules");
+const { buildLinkRule, buildHeadingRule, buildPromoRule, buildExemptions } = require("../utils/automod-rules");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -27,7 +27,6 @@ async function upsert(guild, existing, options) {
 
 async function run() {
   const args = process.argv.slice(2);
-  const serverWide = args.includes("--semua-channel");
   const guildIdArg = args.find((a) => /^\d{15,25}$/.test(a));
 
   let guild;
@@ -59,14 +58,14 @@ async function run() {
     }
   };
 
-  await attempt("Blokir link", buildLinkRule(config));
-  await attempt("Blokir heading (#)", buildHeadingRule(config));
-
-  const promo = buildPromoRule(config, channelList, { serverWide });
-  if (promo.error) results.push(`⚠️ Anti promosi: dilewati. ${promo.error}`);
-  else {
-    await attempt("Anti promosi", promo.rule);
-    console.log(`(anti promosi: ${promo.exemptCount} entri dikecualikan)`);
+  const ex = buildExemptions(config, channelList);
+  if (ex.error) {
+    results.push(`⚠️ Semua aturan dilewati. ${ex.error}`);
+  } else {
+    await attempt("Blokir link", buildLinkRule(config, ex.exemptChannels));
+    await attempt("Blokir heading (#)", buildHeadingRule(config, ex.exemptChannels));
+    await attempt("Anti promosi", buildPromoRule(config, ex.exemptChannels));
+    console.log(`(${ex.exemptChannels.length} entri dikecualikan; aturan hanya aktif di kategori di config.js)`);
   }
 
   console.log("");

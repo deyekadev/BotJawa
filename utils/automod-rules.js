@@ -25,9 +25,15 @@ function baseRule(name, triggerMetadata, customMessage, exemptRoles) {
   };
 }
 
+// Pasang daftar channel/kategori yang dikecualikan ke aturan.
+function withExempt(rule, exemptChannels) {
+  rule.exemptChannels = exemptChannels;
+  return rule;
+}
+
 // 1. Blokir link, kecuali domain yang diizinkan.
-function buildLinkRule(config) {
-  return baseRule(
+function buildLinkRule(config, exemptChannels = []) {
+  return withExempt(baseRule(
     "CIDRO • Blokir link",
     {
       keywordFilter: ["*http://*", "*https://*", "*www.*"],
@@ -35,17 +41,17 @@ function buildLinkRule(config) {
     },
     "Link tersebut tidak diperbolehkan di server ini.",
     config.roles.admin
-  );
+  ), exemptChannels);
 }
 
 // 2. Blokir heading Markdown (# sampai ######).
-function buildHeadingRule(config) {
-  return baseRule(
+function buildHeadingRule(config, exemptChannels = []) {
+  return withExempt(baseRule(
     "CIDRO • Blokir heading (#)",
     { regexPatterns: ["(?m)^ {0,3}#{1,6}[ \\t]+\\S"] },
     "Penggunaan format heading (#) tidak diperbolehkan di server ini.",
     config.roles.admin
-  );
+  ), exemptChannels);
 }
 
 // 3. Anti-promosi. AutoMod tidak bisa dibatasi ke channel tertentu, jadi semua
@@ -72,10 +78,11 @@ function collapseExemptions(channels, protectedCategoryIds) {
   return exempt;
 }
 
-function buildPromoRule(config, channels, { serverWide = false } = {}) {
-  const protectedCategories = new Set(config.automod.promoCategoryIds);
-  const exemptChannels = serverWide ? [] : collapseExemptions(channels, protectedCategories);
-
+// Daftar pengecualian untuk SEMUA aturan: semua di luar kategori terpilih.
+// Return { exemptChannels } atau { error }.
+function buildExemptions(config, channels) {
+  const protectedCategories = new Set(config.automod.categoryIds);
+  const exemptChannels = collapseExemptions(channels, protectedCategories);
   if (exemptChannels.length > MAX_EXEMPT_CHANNELS) {
     return {
       error:
@@ -83,15 +90,19 @@ function buildPromoRule(config, channels, { serverWide = false } = {}) {
         "Pindahkan channel tanpa kategori ke dalam sebuah kategori, lalu jalankan ulang.",
     };
   }
-
-  const rule = baseRule(
-    "CIDRO • Anti promosi",
-    { keywordFilter: config.automod.promoKeywords },
-    "Promosi atau jualan tidak diperbolehkan di server ini.",
-    config.roles.admin
-  );
-  rule.exemptChannels = exemptChannels;
-  return { rule, exemptCount: exemptChannels.length };
+  return { exemptChannels };
 }
 
-module.exports = { buildLinkRule, buildHeadingRule, buildPromoRule, MAX_EXEMPT_CHANNELS };
+function buildPromoRule(config, exemptChannels = []) {
+  return withExempt(
+    baseRule(
+      "CIDRO • Anti promosi",
+      { keywordFilter: config.automod.promoKeywords },
+      "Promosi atau jualan tidak diperbolehkan di server ini.",
+      config.roles.admin
+    ),
+    exemptChannels
+  );
+}
+
+module.exports = { buildLinkRule, buildHeadingRule, buildPromoRule, buildExemptions, MAX_EXEMPT_CHANNELS };
