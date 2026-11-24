@@ -1,9 +1,3 @@
-const { Events } = require("discord.js");
-const { handleBanMessageDelete } = require("../utils/bansearch");
-
-module.exports = {
-  name: Events.MessageDelete,
-  execute(message) {
-    handleBanMessageDelete(message);
-  },
-};
+// Dihapus: fitur Ban List sudah tidak dipakai. File kosong ini dilewati oleh loader.
+// Boleh dihapus.
+module.exports = {};

@@ -9,6 +9,7 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
+    if (!command.data) continue; // lewati file kosong / dinonaktifkan
     commands.push(command.data.toJSON());
 }
 

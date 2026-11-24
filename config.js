@@ -3,24 +3,6 @@
 
 module.exports = {
   // ===========================
-  // BAN LIST
-  // ===========================
-  banlist: {
-    // ID channel tempat pesan Ban List berada
-    channelId: "1460037803197861898",
-
-    // ID channel tempat panel /banpanel dikirim (kosongkan "" untuk memakai channel saat ini)
-    panelChannelId: "1463872322644480223",
-
-    // ID role yang boleh mencari Ban List (tambahkan lebih dari satu di dalam array)
-    allowedRoleIds: ["1452202000593719346"],
-
-    // Jumlah pesan terbaru yang dimuat ke cache saat bot online.
-    // 0 = pindai seluruh riwayat yang dapat diakses bot.
-    maxScan: 0,
-  },
-
-  // ===========================
   // ROLE
   // ===========================
   roles: {
@@ -42,5 +24,34 @@ module.exports = {
   payment: {
     // Pesan yang dikirim oleh .rek
     rekMessage: "Mandiri 1710017138903 - ALMASITA JIHAN.",
+  },
+
+  // ===========================
+  // LINK
+  // ===========================
+  links: {
+    // Dikirim oleh /sv
+    server: "https://www.roblox.com/share?code=8032fe0c92ae6f4f8c532493a18afdf6&type=Server",
+  },
+
+  // ===========================
+  // AUTOMOD (dipasang oleh: node scripts/setup-automod.js)
+  // ===========================
+  automod: {
+    // Link dengan domain ini TIDAK diblokir (subdomain ikut diizinkan)
+    allowedLinkDomains: ["youtube.com", "youtu.be", "tiktok.com", "roblox.com"],
+
+    // Semua aturan AutoMod (link, heading, promosi) HANYA aktif di kategori ini
+    categoryIds: ["1452194023728091287", "1455610058275557467"],
+
+    // Kata/frasa terlarang untuk anti-promosi (dicocokkan sebagai kata utuh)
+    promoKeywords: [
+      "robux", "topup", "top up", "jual", "dijual", "open jasa", "jasa",
+      "ready stock", "stok tersedia", "akun dijual", "jual akun", "open murid",
+      "murid private", "murid priv", "rekber", "nitro murah", "nitro boost",
+      "panel murah", "hosting murah", "suntik followers", "followers murah",
+      "yobux", "joki", "visend", "visen", "ready", "redi", "rbx", "bio",
+      "ridi", "yobux.id", "yobux.com", "obux",
+    ],
   },
 };

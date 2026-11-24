@@ -7,8 +7,7 @@ const { Client, GatewayIntentBits, Partials, Events, Collection } = require("dis
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
+    GatewayIntentBits.GuildMessages
   ],
   partials: [Partials.Channel]
 });

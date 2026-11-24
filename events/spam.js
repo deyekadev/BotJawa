@@ -9,7 +9,7 @@ module.exports = {
     name: Events.MessageCreate,
     async execute(message) {
         // Abaikan bot atau pesan yang merupakan command !ping
-        if (message.author.bot || !message.guild || message.content === '!ping') return;
+        if (message.author.bot || !message.guild) return;
 
         if (usersMap.has(message.author.id)) {
             const userData = usersMap.get(message.author.id);
